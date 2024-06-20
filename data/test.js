@@ -17,7 +17,7 @@ const dictionary = await fetch("https://kaikki.org/dictionary/Korean/kaikki.org-
             })
             if (!obj.romanization || !obj.hangeul) return
             return {
-                romaja: obj.romanization.toLowerCase().replace("'", ""),
+                romaja: obj.romanization.toLowerCase().replace(/'/g, ""),
                 korean: obj.hangeul
             }
         })
