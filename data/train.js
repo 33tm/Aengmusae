@@ -22,7 +22,7 @@ const getLyrics = async link => {
                 body[i]
                     .trim()
                     .toLowerCase()
-                    .replace(/[^a-z가-힣]+/, "")
+                    .replace(/[^a-z가-힣\s()\[\]]+/, "")
                     .split(/[\s()\[\]]+/)
             ]))
         } else {
@@ -33,7 +33,7 @@ const getLyrics = async link => {
                     .textContent
                     .trim()
                     .toLowerCase()
-                    .replace(/[^a-z가-힣]+/, "")
+                    .replace(/[^a-z가-힣\s()\[\]]+/, "")
                     .split(/[\s()\[\]]+/))
             return { romaja, korean }
         }
@@ -42,7 +42,7 @@ const getLyrics = async link => {
     if (!romaja || !korean || romaja.length !== korean.length) {
         console.log("X", link.textContent)
         x++
-        return null
+        return
     }
 
     console.log("O", link.textContent)
