@@ -105,5 +105,5 @@ console.clear()
 
 console.log("O", o)
 console.log("X", x)
-console.log((o / (o + x) * 100).toFixed(2) + "%")
-console.log(`${o}/${o + x} songs (${Math.round(((o / (o + x)) * 10000)) / 100} - ${words.flat().filter(Boolean).length} words`)
+console.log(`${o}/${o + x} songs (${Math.round(((o / (o + x)) * 10000)) / 100}%)`)
+console.log(`${words.length} words`)
