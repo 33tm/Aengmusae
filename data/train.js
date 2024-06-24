@@ -67,10 +67,11 @@ const getLyrics = async link => {
                 else break
             }
 
-            return {
-                romaja: romaja.slice(prefix, romaja.length - suffix),
-                korean: korean.slice(prefix, korean.length - suffix)
-            }
+            romaja = romaja.slice(prefix, romaja.length - suffix)
+            korean = korean.slice(prefix, korean.length - suffix)
+
+            if (romaja.match(/[a-z]+/) && korean.match(/[가-힣]+/))
+                return { romaja, korean }
         })
 }
 
