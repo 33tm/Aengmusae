@@ -15,11 +15,14 @@ const dictionary = await fetch("https://kaikki.org/dictionary/Korean/kaikki.org-
                 if (!tags) return
                 obj[tags[0]] = form
             })
-            if (!obj.romanization || !obj.hangeul) return
-            return {
-                romaja: obj.romanization.toLowerCase().replace(/'/g, ""),
-                korean: obj.hangeul
-            }
+
+            const romaja = obj.romanization?.toLowerCase()
+            const korean = obj.hangeul
+
+            if (!romaja || !korean) return
+            if (romaja.match(/[^a-z가-힣]+/) || korean.match(/[^가-힣]+/)) return
+
+            return { romaja, korean }
         })
         .filter(Boolean))
 
