@@ -11,14 +11,19 @@ const getLyrics = async link => {
 
     const tables = [...document
         .querySelectorAll("table[border='0'] tr")]
-        .map(({ children }) => [...children].map(({ textContent }) => textContent.toLowerCase()))
+        .map(({ children }) => [...children]
+            .map(({ textContent }) => textContent))
 
     const { romaja, korean } = (() => {
         if (tables.length) {
             const [head, body] = tables
             return Object.fromEntries(head.map((key, i) => [
                 key === "romanization" ? "romaja" : key.trim(),
-                body[i].split(/[\s()\[\]]+/)
+                body[i]
+                    .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z가-힣]+/, "")
+                    .split(/[\s()\[\]]+/)
             ]))
         } else {
             const [romaja, korean] = [...document
@@ -27,6 +32,8 @@ const getLyrics = async link => {
                     .querySelector(".wp-block-group__inner-container")
                     .textContent
                     .trim()
+                    .toLowerCase()
+                    .replace(/[^a-z가-힣]+/, "")
                     .split(/[\s()\[\]]+/))
             return { romaja, korean }
         }
@@ -53,14 +60,17 @@ const getLyrics = async link => {
                 if (romaja[i] === korean[i]) prefix++
                 else break
             }
+
             let suffix = 0
             for (let i = 0; i < Math.min(romaja.length, korean.length); i++) {
                 if (romaja[romaja.length - 1 - i] === korean[korean.length - 1 - i]) suffix++
                 else break
             }
-            romaja = romaja.slice(prefix, romaja.length - suffix)
-            korean = korean.slice(prefix, korean.length - suffix)
-            if (korean.match(/[가-힣]+/)) return { romaja, korean }
+
+            return {
+                romaja: romaja.slice(prefix, romaja.length - suffix),
+                korean: korean.slice(prefix, korean.length - suffix)
+            }
         })
 }
 
