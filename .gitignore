@@ -1,5 +1,4 @@
 .venv
-.idea
 node_modules
 train.json
 test.json
