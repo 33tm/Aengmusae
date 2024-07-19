@@ -1,3 +1,4 @@
+from os import mkdir
 from csv import writer
 from requests import get
 from bs4 import BeautifulSoup
@@ -19,7 +20,7 @@ def getSongs(url):
         page = next.find("a")["href"]
         print(f"page {page.split('/')[-2]}, {getElapsed()} elapsed")
         songs.update(getSongs(page))
-    return songs
+    return list(songs)
 
 def getLyrics(url):
     soup = BeautifulSoup(get(url).content, "html.parser")
@@ -45,12 +46,14 @@ def getLyrics(url):
     except:
         return
 
-if exists("data/songs.txt"):
+if exists("data/temp/songs.txt"):
     with open("data/songs.txt", "r") as file:
         songs = file.read().split("\n")
 else:
+    if not exists("data/temp"):
+        mkdir("data/temp")
     songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1450")
-    with open("data/songs.txt", "w") as file:
+    with open("data/temp/songs.txt", "w") as file:
         file.write(("\n").join(songs))
 
 print(f"loaded {len(songs)} songs")
