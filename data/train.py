@@ -4,7 +4,7 @@ from requests import get
 from bs4 import BeautifulSoup
 from datetime import timedelta
 from timeit import default_timer
-from os.path import exists, commonprefix
+from os.path import commonprefix, exists
 
 start = default_timer()
 
