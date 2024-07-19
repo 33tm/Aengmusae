@@ -47,12 +47,12 @@ def getLyrics(url):
         return
 
 if exists("data/temp/songs.txt"):
-    with open("data/songs.txt", "r") as file:
+    with open("data/temp/songs.txt", "r") as file:
         songs = file.read().split("\n")
 else:
+    songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1450")
     if not exists("data/temp"):
         mkdir("data/temp")
-    songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1450")
     with open("data/temp/songs.txt", "w") as file:
         file.write(("\n").join(songs))
 
