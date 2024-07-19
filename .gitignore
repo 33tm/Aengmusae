@@ -2,5 +2,6 @@
 .idea
 .DS_Store
 node_modules
-train.json
-test.json
+*.json
+*.csv
+*.txt
