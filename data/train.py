@@ -24,9 +24,9 @@ def getSongs(url):
     soup = BeautifulSoup(get(url).content, "html.parser")
     songs = {a["href"] for a in soup.find_all("a", rel="bookmark")}
     next = soup.find("div", class_="nav-previous")
+    print(f"page {url.split('/')[-2]}, {getElapsed()} elapsed")
     if next:
         page = next.find("a")["href"]
-        print(f"page {page.split('/')[-2]}, {getElapsed()} elapsed")
         songs.update(getSongs(page))
     return list(songs)
 
@@ -80,17 +80,17 @@ if exists("data/temp/songs.txt"):
     with open("data/temp/songs.txt", "r") as file:
         songs = file.read().split("\n")
 else:
-    songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1450")
+    songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1/")
     if not exists("data/temp"):
         mkdir("data/temp")
     with open("data/temp/songs.txt", "w") as file:
         file.write(("\n").join(songs))
 
-print(f"loaded {len(songs)} songs")
+print(f"loaded {len(songs)} songs in {getElapsed()}")
 
-rows = getLyrics("https://colorcodedlyrics.com/2019/02/10/itzy-dalla-dalla/")
+rows = []
 
-print(f"scraped {len(rows)} pairs")
+print(f"scraped {len(rows)} pairs in {getElapsed()}")
 with open("data/train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
