@@ -49,8 +49,6 @@ def getLyrics(url):
         soup.select("table")[1].select("td")
     ]
 
-    print(head)
-
     romaja = body[head.index("Romanization")]
     korean = body[head.index("Korean") if "Korean" in head else head.index("Hangul")]
 
@@ -72,7 +70,7 @@ def getLyrics(url):
         for i in range(len(r)):
             r[i], k[i] = trimDuplicate(r[i], k[i])
             r[i] = r[i].replace("-", "")
-            if match(r"^[a-z ]+$", r[i]) and match(r"^[가-힣 ]+$", k[i]):
+            if match(r"^[a-z\s]+$", r[i]) and match(r"^[가-힣\s]+$", k[i]):
                 r_line.append(r[i])
                 k_line.append(k[i])
         lyrics.append((" ".join(r_line), " ".join(k_line)))
@@ -92,7 +90,7 @@ print(f"loaded {len(songs)} songs")
 
 rows = getLyrics("https://colorcodedlyrics.com/2019/02/10/itzy-dalla-dalla/")
 
-print(f"scraped {len(rows)} lines")
+print(f"scraped {len(rows)} pairs")
 with open("data/train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
