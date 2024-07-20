@@ -1,4 +1,5 @@
 from os import mkdir
+from re import match
 from csv import writer
 from requests import get
 from bs4 import BeautifulSoup
@@ -7,6 +8,13 @@ from timeit import default_timer
 from os.path import commonprefix, exists
 
 start = default_timer()
+
+def trimDuplicate(a, b):
+    prefix_len = len(commonprefix([a, b]))
+    suffix_len = len(commonprefix([a[::-1], b[::-1]]))
+    a = a[prefix_len:-suffix_len] if suffix_len > 0 else a[prefix_len:]
+    b = b[prefix_len:-suffix_len] if suffix_len > 0 else b[prefix_len:]
+    return a, b
 
 def getElapsed():
     elapsed = timedelta(seconds=default_timer() - start)
@@ -24,27 +32,51 @@ def getSongs(url):
 
 def getLyrics(url):
     soup = BeautifulSoup(get(url).content, "html.parser")
-    table = soup.find("table", border=0)
-    head = [item.getText() for item in table.findAll("th")]
-    body = [item.getText() for item in table.findAll("td")]
-    try:
-        romaja = body[head.index("Romanization")].split("\n")
-        korean = body[head.index("Korean")].split("\n")
-        if len(romaja) != len(korean):
-            return
-        lyrics = []
-        for r, k in zip(romaja, korean):
-            if r == k:
-                continue
-            prefix_len = len(commonprefix([r, k]))
-            r, k = r[prefix_len:], k[prefix_len:]
-            suffix_len = len(commonprefix([r[::-1], k[::-1]]))
-            if suffix_len > 0:
-                r, k = r[:-suffix_len], k[:-suffix_len]
-            lyrics.append((r, k))
-        return lyrics
-    except:
-        return
+    head = [
+        item.getText() for item in
+        soup.select("table[border='0'] th")
+        or
+        soup.select(".wp-block-column > p > strong > span")
+        or
+        soup.select("table")[1].select("th")
+    ]
+    body = [
+        item.getText() for item in
+        soup.select("table[border='0'] td")
+        or
+        soup.select(".wp-block-column > .wp-block-group > div")
+        or
+        soup.select("table")[1].select("td")
+    ]
+
+    print(head)
+
+    romaja = body[head.index("Romanization")]
+    korean = body[head.index("Korean") if "Korean" in head else head.index("Hangul")]
+
+    romaja = [word for word in romaja.lower().split("\n") if word]
+    korean = [word for word in korean.lower().split("\n") if word]
+
+    if len(romaja) != len(korean):
+        return []
+    
+    lyrics = []
+    for r, k in zip(romaja, korean):
+        r, k = trimDuplicate(r.strip(), k.strip())
+        if not r or not k:
+            continue
+        r, k = r.split(" "), k.split(" ")
+        if len(r) != len(k):
+            continue
+        r_line, k_line = [], []
+        for i in range(len(r)):
+            r[i], k[i] = trimDuplicate(r[i], k[i])
+            r[i] = r[i].replace("-", "")
+            if match(r"^[a-z ]+$", r[i]) and match(r"^[가-힣 ]+$", k[i]):
+                r_line.append(r[i])
+                k_line.append(k[i])
+        lyrics.append((" ".join(r_line), " ".join(k_line)))
+    return lyrics
 
 if exists("data/temp/songs.txt"):
     with open("data/temp/songs.txt", "r") as file:
@@ -58,7 +90,9 @@ else:
 
 print(f"loaded {len(songs)} songs")
 
-rows = getLyrics(songs[0])
+rows = getLyrics("https://colorcodedlyrics.com/2019/02/10/itzy-dalla-dalla/")
+
+print(f"scraped {len(rows)} lines")
 with open("data/train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
