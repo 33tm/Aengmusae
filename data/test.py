@@ -9,11 +9,11 @@ if exists("temp/dictionary.jsonl"):
     with open("temp/dictionary.jsonl") as file:
         dictionary = file.read().split("\n")
 else:
-    res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").content
+    res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").text
     dictionary = res.split("\n")
     if not exists("temp"):
         mkdir("temp")
-    with open("temp/dictionary.jsonl", "w") as file:
+    with open("temp/dictionary.jsonl", "w", encoding="utf-8") as file:
         file.write(res)
 
 words = []
