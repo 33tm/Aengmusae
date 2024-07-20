@@ -1,18 +1,19 @@
 from re import sub
+from os import mkdir
 from csv import writer
 from json import loads
-from os import makedirs
 from requests import get
 from os.path import exists
 
-if exists("data/temp/dictionary.jsonl"):
-    with open("data/temp/dictionary.jsonl") as file:
+if exists("temp/dictionary.jsonl"):
+    with open("temp/dictionary.jsonl") as file:
         dictionary = file.read().split("\n")
 else:
     res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").text
     dictionary = res.split("\n")
-    makedirs("data/temp", exist_ok=True)
-    with open("data/temp/dictionary.jsonl", "w") as file:
+    if not exists("temp"):
+        mkdir("temp")
+    with open("temp/dictionary.jsonl", "w") as file:
         file.write(res)
 
 words = []
@@ -30,7 +31,7 @@ for word in dictionary:
         words.append((romaja, korean))
 
 print(f"generated {len(words)} pairs")
-with open("data/test.csv", "w") as file:
+with open("test.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
     csv.writerows(words)
