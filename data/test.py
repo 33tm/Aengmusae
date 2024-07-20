@@ -13,7 +13,7 @@ else:
     dictionary = res.split("\n")
     if not exists("temp"):
         mkdir("temp")
-    with open("temp/dictionary.jsonl", "w", encoding="utf-8") as file:
+    with open("temp/dictionary.jsonl", "w") as file:
         file.write(res)
 
 words = []
