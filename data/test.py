@@ -9,7 +9,7 @@ if exists("temp/dictionary.jsonl"):
     with open("temp/dictionary.jsonl") as file:
         dictionary = file.read().split("\n")
 else:
-    res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").text
+    res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").content
     dictionary = res.split("\n")
     if not exists("temp"):
         mkdir("temp")
