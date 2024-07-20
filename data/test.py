@@ -1,7 +1,7 @@
 from re import sub
-from os import mkdir
 from csv import writer
 from json import loads
+from os import makedirs
 from requests import get
 from os.path import exists
 
@@ -11,8 +11,7 @@ if exists("data/temp/dictionary.jsonl"):
 else:
     res = get("https://kaikki.org/dictionary/Korean/kaikki.org-dictionary-Korean.jsonl").text
     dictionary = res.split("\n")
-    if not exists("data/temp"):
-        mkdir("data/temp")
+    makedirs("data/temp", exist_ok=True)
     with open("data/temp/dictionary.jsonl", "w") as file:
         file.write(res)
 

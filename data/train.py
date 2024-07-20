@@ -1,6 +1,6 @@
-from os import mkdir
 from re import match
 from csv import writer
+from os import makedirs
 from requests import get
 from bs4 import BeautifulSoup
 from datetime import timedelta
@@ -81,8 +81,7 @@ if exists("data/temp/songs.txt"):
         songs = file.read().split("\n")
 else:
     songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1/")
-    if not exists("data/temp"):
-        mkdir("data/temp")
+    makedirs("data/temp", exist_ok=True)
     with open("data/temp/songs.txt", "w") as file:
         file.write(("\n").join(songs))
 
