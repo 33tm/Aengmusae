@@ -54,7 +54,7 @@ def getLyrics(url):
             soup.select("table")[1].select("td")
         ]
 
-        if not "Romanization" in head or (not "Korean" in head and not "Hangul" in head):
+        if len(head) != len(body) or "Romanization" not in head or ("Korean" not in head and "Hangul" not in head):
             return []
 
         romaja = body[head.index("Romanization")]
@@ -113,7 +113,7 @@ with ThreadPoolExecutor(max_workers=100) as executor:
     for song in songs:
         futures.append(executor.submit(getLyrics, song))
 for i, future in enumerate(as_completed(futures)):
-    lyrics += future.result()
+    lyrics += [pair for pair in future.result() if pair]
 
 with open("train.csv", "w") as file:
     csv = writer(file)
