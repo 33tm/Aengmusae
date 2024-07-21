@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from datetime import timedelta
 from timeit import default_timer
 from os.path import commonprefix, exists
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 start = default_timer()
 
@@ -20,14 +21,10 @@ def getElapsed():
     elapsed = timedelta(seconds=default_timer() - start)
     return str(elapsed).split('.')[0]
 
-def getSongs(url):
+def getSongs(page):
+    url = f"https://colorcodedlyrics.com/category/krn/page/{page}"
     soup = BeautifulSoup(get(url).content, "html.parser")
     songs = {a["href"] for a in soup.find_all("a", rel="bookmark")}
-    next = soup.find("div", class_="nav-previous")
-    print(f"page {url.split('/')[-2]}, {getElapsed()} elapsed")
-    if next:
-        page = next.find("a")["href"]
-        songs.update(getSongs(page))
     return list(songs)
 
 def getLyrics(url):
@@ -48,6 +45,9 @@ def getLyrics(url):
         or
         soup.select("table")[1].select("td")
     ]
+
+    if not "Romanization" in head or "Japanese" in head:
+        return []
 
     romaja = body[head.index("Romanization")]
     korean = body[head.index("Korean") if "Korean" in head else head.index("Hangul")]
@@ -80,18 +80,35 @@ if exists("temp/songs.txt"):
     with open("temp/songs.txt", "r") as file:
         songs = file.read().split("\n")
 else:
-    songs = getSongs("https://colorcodedlyrics.com/category/krn/page/1/")
+    songs = []
+    futures = []
+    # 1465 pages in the "Korean" category of CCL
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        for i in range(1465):
+            futures.append(executor.submit(getSongs, i))
+    for i, future in enumerate(as_completed(futures)):
+        try:
+            songs += future.result()
+            print(f"page {i + 1}/1465 - {getElapsed()}")
+        except Exception as e:
+            print(f"page {i + 1}/1465 - {e}")
     if not exists("temp"):
         mkdir("temp")
     with open("temp/songs.txt", "w") as file:
-        file.write(("\n").join(songs))
+        file.write("\n".join(songs))
 
-print(f"loaded {len(songs)} songs in {getElapsed()}")
+lyrics = []
+futures = []
+with ThreadPoolExecutor(max_workers=10) as executor:
+    for song in songs:
+        futures.append(executor.submit(getLyrics, song))
+for i, future in enumerate(as_completed(futures)):
+    try:
+        lyrics += future.result()
+    except Exception as e:
+        print(f"song {i + 1}/{len(songs)} - {e}")
 
-rows = []
-
-print(f"scraped {len(rows)} pairs in {getElapsed()}")
 with open("train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
-    csv.writerows(rows)
+    csv.writerows(lyrics)
