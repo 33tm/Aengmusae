@@ -54,7 +54,7 @@ def getLyrics(url):
             soup.select("table")[1].select("td")
         ]
 
-        if not "Romanization" in head or "Japanese" in head:
+        if not "Romanization" in head or (not "Korean" in head and not "Hangul" in head):
             return []
 
         romaja = body[head.index("Romanization")]
