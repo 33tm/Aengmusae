@@ -119,3 +119,5 @@ with open("train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
     csv.writerows(lyrics)
+
+print(f"scraped {len(lyrics)} pairs in {getElapsed()}")
