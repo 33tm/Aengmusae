@@ -97,7 +97,7 @@ else:
     songs = []
     futures = []
     # 1465 pages in the "Korean" category of CCL
-    with ThreadPoolExecutor(max_workers=10) as executor:
+    with ThreadPoolExecutor(max_workers=100) as executor:
         for i in range(1465):
             futures.append(executor.submit(getSongs, i))
     for i, future in enumerate(as_completed(futures)):
@@ -109,7 +109,7 @@ else:
 
 lyrics = []
 futures = []
-with ThreadPoolExecutor(max_workers=10) as executor:
+with ThreadPoolExecutor(max_workers=100) as executor:
     for song in songs:
         futures.append(executor.submit(getLyrics, song))
 for i, future in enumerate(as_completed(futures)):
