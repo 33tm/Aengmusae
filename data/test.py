@@ -30,8 +30,9 @@ for word in dictionary:
         korean = sub(r"[^가-힣\s]", "", form["form"])
         words.append((romaja, korean))
 
-print(f"generated {len(words)} pairs")
 with open("test.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
     csv.writerows(words)
+    
+print(f"generated {len(words)} pairs")
