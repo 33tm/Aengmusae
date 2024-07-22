@@ -60,19 +60,21 @@ def getLyrics(url):
         lyrics = []
         for r, k in zip(romaja, korean):
             r, k = r.strip(), k.strip()
-            prefix_len = len(commonprefix([r, k]))
-            suffix_len = len(commonprefix([r[::-1], k[::-1]]))
-            r = r[prefix_len:-suffix_len] if suffix_len > 0 else r[prefix_len:]
-            k = k[prefix_len:-suffix_len] if suffix_len > 0 else k[prefix_len:]
+            pl = len(commonprefix([r, k]))
+            sl = len(commonprefix([r[::-1], k[::-1]]))
+            r = r[pl:-sl] if sl > 0 else r[pl:]
+            k = k[pl:-sl] if sl > 0 else k[pl:]
             if not r or not k:
                 continue
             r, k = r.split(), k.split()
             if len(r) != len(k):
                 continue
-            r, k = map(" ".join, zip(*[
-                (rw, kw) for rw, kw in zip(r, k)
-                if match(r"^[a-z\s]+$", rw) and match(r"^[가-힣\s]+$", kw)
-            ]))
+            rt, kt = [], []
+            for rw, kw in zip(r, k):
+                if match(r"^[a-z\s]+$", rw) and match(r"^[가-힣\s]+$", kw):
+                    rt.append(rw)
+                    kt.append(kw)
+            r, k = " ".join(rt), " ".join(kt)
             if r and k:
                 lyrics.append((r, k))
         print(f"{getElapsed()} - {url.split('/')[-2].replace('-', ' ')}", end="\r")
@@ -103,4 +105,4 @@ with open("train.csv", "w", encoding="utf-8", newline="") as file:
     csv.writerow(["romaja", "korean"])
     csv.writerows(lyrics)
 
-print(f"\nscraped {len(lyrics)} pairs in {getElapsed()}")
+print(f"\nscraped {len(lyrics)} pairs ({len(songs)} songs) in {getElapsed()}")
