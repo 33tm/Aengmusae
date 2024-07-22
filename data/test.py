@@ -35,4 +35,4 @@ with open("test.csv", "w") as file:
     csv.writerow(["romaja", "korean"])
     csv.writerows(words)
     
-print(f"generated {len(words)} pairs")
+print(f"downloaded {len(words)} pairs")
