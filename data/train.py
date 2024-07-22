@@ -53,8 +53,8 @@ def getLyrics(url):
         romaja = body[head.index("Romanization")]
         korean = body[head.index("Korean") if "Korean" in head else head.index("Hangul")]
 
-        romaja = [word for word in romaja.lower().split("\n") if word]
-        korean = [word for word in korean.lower().split("\n") if word]
+        romaja = [word for word in romaja.lower().splitlines() if word]
+        korean = [word for word in korean.lower().splitlines() if word]
 
         if len(romaja) != len(korean):
             return []
@@ -85,7 +85,7 @@ def getLyrics(url):
 
 if exists("temp/songs.txt"):
     with open("temp/songs.txt", "r") as file:
-        songs = file.read().split("\n")
+        songs = file.read().splitlines()
 else:
     with ThreadPoolExecutor(max_workers=100) as executor:
         futures = [executor.submit(getSongs, i) for i in range(1465)]
@@ -100,7 +100,7 @@ with ThreadPoolExecutor(max_workers=100) as executor:
     futures = [executor.submit(getLyrics, song) for song in songs]
 lyrics = {lyric for future in as_completed(futures) for lyric in future.result()}
 
-with open("train.csv", "w") as file:
+with open("train.csv", "w", encoding="utf-8", newline="") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
     csv.writerows(lyrics)
