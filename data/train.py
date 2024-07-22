@@ -78,7 +78,7 @@ def getLyrics(url):
         print(f"{getElapsed()} - {url.split('/')[-2].replace('-', ' ')}", end="\r")
         return lyrics
     except Exception as e:
-        if e.__class__.__name__ == "ConnectionError":
+        if e.__class__.__name__ != IndexError:
             return getLyrics(url)
         print(f"{e} - {url}")
         return []
