@@ -10,13 +10,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 start = default_timer()
 
-def trimDuplicate(a, b):
-    prefix_len = len(commonprefix([a, b]))
-    suffix_len = len(commonprefix([a[::-1], b[::-1]]))
-    a = a[prefix_len:-suffix_len] if suffix_len > 0 else a[prefix_len:]
-    b = b[prefix_len:-suffix_len] if suffix_len > 0 else b[prefix_len:]
-    return a, b
-
 def getElapsed():
     elapsed = timedelta(seconds=default_timer() - start)
     return str(elapsed).split('.')[0]
@@ -68,20 +61,20 @@ def getLyrics(url):
         
         lyrics = []
         for r, k in zip(romaja, korean):
-            r, k = trimDuplicate(r.strip(), k.strip())
+            r, k = r.strip(), k.strip()
+            prefix_len = len(commonprefix([r, k]))
+            suffix_len = len(commonprefix([r[::-1], k[::-1]]))
+            r = r[prefix_len:-suffix_len] if suffix_len > 0 else r[prefix_len:]
+            k = k[prefix_len:-suffix_len] if suffix_len > 0 else k[prefix_len:]
             if not r or not k:
                 continue
-            r, k = r.split(" "), k.split(" ")
+            r, k = r.split(), k.split()
             if len(r) != len(k):
                 continue
-            r_line, k_line = [], []
-            for i in range(len(r)):
-                r[i], k[i] = trimDuplicate(r[i], k[i])
-                r[i] = r[i].replace("-", "")
-                if match(r"^[a-z\s]+$", r[i]) and match(r"^[가-힣\s]+$", k[i]):
-                    r_line.append(r[i])
-                    k_line.append(k[i])
-            lyrics.append((" ".join(r_line), " ".join(k_line)))
+            r = " ".join([word for word in r if match(r"^[a-z\s]+$", word)])
+            k = " ".join([word for word in k if match(r"^[가-힣\s]+$", word)])
+            if r and k:
+                lyrics.append((r, k))
         print(f"{getElapsed()} - {url.split('/')[-2].replace('-', ' ')}", end="\r")
         return lyrics
     except Exception as e:
@@ -94,30 +87,22 @@ if exists("temp/songs.txt"):
     with open("temp/songs.txt", "r") as file:
         songs = file.read().split("\n")
 else:
-    songs = []
-    futures = []
-    # 1465 pages in the "Korean" category of CCL
     with ThreadPoolExecutor(max_workers=100) as executor:
-        for i in range(1465):
-            futures.append(executor.submit(getSongs, i))
-    for i, future in enumerate(as_completed(futures)):
-        songs += future.result()
+        futures = [executor.submit(getSongs, i) for i in range(1465)]
+    songs = [song for future in as_completed(futures) for song in future.result()]
     if not exists("temp"):
         mkdir("temp")
-    with open("temp/songs.txt", "w") as file:
-        file.write("\n".join(songs))
+    if len(songs):
+        with open("temp/songs.txt", "w") as file:
+            file.write("\n".join(songs))
 
-lyrics = []
-futures = []
 with ThreadPoolExecutor(max_workers=100) as executor:
-    for song in songs:
-        futures.append(executor.submit(getLyrics, song))
-for i, future in enumerate(as_completed(futures)):
-    lyrics += [pair for pair in future.result() if pair]
+    futures = [executor.submit(getLyrics, song) for song in songs]
+lyrics = {lyric for future in as_completed(futures) for lyric in future.result()}
 
 with open("train.csv", "w") as file:
     csv = writer(file)
     csv.writerow(["romaja", "korean"])
     csv.writerows(lyrics)
 
-print(f"scraped {len(lyrics)} pairs in {getElapsed()}")
+print(f"\nscraped {len(lyrics)} pairs in {getElapsed()}")
