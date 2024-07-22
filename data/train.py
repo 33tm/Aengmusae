@@ -89,7 +89,7 @@ if exists("temp/songs.txt"):
 else:
     with ThreadPoolExecutor(max_workers=100) as executor:
         futures = [executor.submit(getSongs, i) for i in range(1465)]
-    songs = [song for future in as_completed(futures) for song in future.result()]
+    songs = {song for future in as_completed(futures) for song in future.result()}
     if not exists("temp"):
         mkdir("temp")
     if len(songs):
