@@ -69,8 +69,10 @@ def getLyrics(url):
             r, k = r.split(), k.split()
             if len(r) != len(k):
                 continue
-            r = " ".join([word for word in r if match(r"^[a-z\s]+$", word)])
-            k = " ".join([word for word in k if match(r"^[가-힣\s]+$", word)])
+            r, k = map(" ".join, zip(*[
+                (rw, kw) for rw, kw in zip(r, k)
+                if match(r"^[a-z\s]+$", rw) and match(r"^[가-힣\s]+$", kw)
+            ]))
             if r and k:
                 lyrics.append((r, k))
         print(f"{getElapsed()} - {url.split('/')[-2].replace('-', ' ')}", end="\r")
