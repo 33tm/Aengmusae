@@ -22,9 +22,9 @@ def getSongs(page):
         print(f"{getElapsed()} - page {page}", end="\r")
         return list(songs)
     except Exception as e:
-        if e.__class__.__name__ == "ConnectionError":
+        if e.__class__.__name__ != IndexError:
             return getSongs(page)
-        print(f"{e} - {url}")
+        print(f"{e.__class__.__name__} - {url}")
         return []
 
 def getLyrics(url):
