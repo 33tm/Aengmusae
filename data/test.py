@@ -16,7 +16,7 @@ else:
     with open("temp/dictionary.jsonl", "w") as file:
         file.write(res)
 
-words = []
+words = set()
 for word in dictionary:
     if not word:
         continue
@@ -28,7 +28,7 @@ for word in dictionary:
             continue
         romaja = sub(r"[^a-z\s]+", "", form["roman"])
         korean = sub(r"[^가-힣\s]", "", form["form"])
-        words.append((romaja, korean))
+        words.add((romaja, korean))
 
 with open("test.csv", "w") as file:
     csv = writer(file)
