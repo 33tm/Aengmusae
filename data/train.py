@@ -80,7 +80,7 @@ def getLyrics(url):
     except Exception as e:
         if e.__class__.__name__ == "ConnectionError":
             return getLyrics(url)
-        print(f"{e} - {url}")
+        print(f"{e.__class__.__name__} - {url}")
         return []
 
 if exists("temp/songs.txt"):
