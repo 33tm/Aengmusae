@@ -21,10 +21,10 @@ for word in dictionary:
     if not word:
         continue
     word = loads(word)
-    if not "forms" in word:
+    if "forms" not in word:
         continue
     for form in word["forms"]:
-        if not "roman" in form or not "form" in form:
+        if "roman" not in form or "form" not in form:
             continue
         romaja = sub(r"[^a-z\s]+", "", form["roman"])
         korean = sub(r"[^가-힣\s]", "", form["form"])
