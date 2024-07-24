@@ -31,8 +31,6 @@ for word in dictionary:
         words.add((romaja, korean))
 
 with open("test.csv", "w", encoding="utf-8", newline="") as file:
-    csv = writer(file)
-    csv.writerow(["romaja", "korean"])
-    csv.writerows(words)
+    writer(file).writerows(words)
     
 print(f"downloaded {len(words)} pairs")

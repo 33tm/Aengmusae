@@ -101,8 +101,6 @@ with ThreadPoolExecutor(max_workers=100) as executor:
 lyrics = {lyric for future in as_completed(futures) for lyric in future.result()}
 
 with open("train.csv", "w", encoding="utf-8", newline="") as file:
-    csv = writer(file)
-    csv.writerow(["romaja", "korean"])
-    csv.writerows(lyrics)
+    writer(file).writerows(lyrics)
 
 print(f"\nscraped {len(lyrics)} pairs ({len(songs)} songs) in {getElapsed()}")
