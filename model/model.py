@@ -19,7 +19,7 @@ if not exists("../data/train.csv"):
 
 with open("../data/test.csv", encoding="utf-8", newline="") as file:
     test = [tuple(row) for row in reader(file)]
-    print(f"Loaded {len(train)} testing pairs")
+    print(f"Loaded {len(test)} testing pairs")
 
 class Initialize:
     def __init__(self, words):
