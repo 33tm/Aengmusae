@@ -13,7 +13,7 @@ start = default_timer()
 
 def getElapsed():
     elapsed = timedelta(seconds=default_timer() - start)
-    return str(elapsed).split('.')[0]
+    return str(elapsed).split(".")[0]
 
 def getSongs(page):
     try:
