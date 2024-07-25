@@ -18,7 +18,7 @@ if not exists("../data/train.csv"):
     exit()
 
 with open("../data/test.csv", encoding="utf-8", newline="") as file:
-    test = [tuple(row) for row in reader(file)][:100]
+    test = [tuple(row) for row in reader(file)]
     print(f"Loaded {len(train)} testing pairs")
 
 class Initialize:
