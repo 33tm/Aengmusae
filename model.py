@@ -39,8 +39,8 @@ class RNN(nn.Module):
     def __init__(self, device):
         super(RNN, self).__init__()
         self.device = device
-        self.rnn = nn.RNN(charset_max, 128, batch_first=True).to(device)
-        self.linear = nn.Linear(128, charset_max).to(device)
+        self.rnn = nn.RNN(charset_max, 128, batch_first=True)
+        self.linear = nn.Linear(128, charset_max)
     
     def forward(self, input):
         hidden = torch.zeros(1, input.size(0), 128).to(self.device)
@@ -55,7 +55,7 @@ def create_tensors(input: Initialize):
             max(romaja.max, korean.max),
             1,
             charset_max,
-        ).to(device)
+        )
         for i, char in enumerate(word):
             tensor[i][0][input.charset.index(char)] = 1
         input.tensors.append(tensor)
