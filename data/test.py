@@ -28,7 +28,8 @@ for word in dictionary:
             continue
         romaja = sub(r"[^a-z\s]+", "", form["roman"])
         korean = sub(r"[^가-힣\s]", "", form["form"])
-        words.add((romaja, korean))
+        for r, k in zip(romaja.split(), korean.split()):
+            words.add((r, k))
 
 with open("test.csv", "w", encoding="utf-8", newline="") as file:
     writer(file).writerows(words)

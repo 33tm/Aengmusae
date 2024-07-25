@@ -57,7 +57,7 @@ def getLyrics(url):
         if len(romaja) != len(korean):
             return []
         
-        lyrics = []
+        words = set()
         for r, k in zip(romaja, korean):
             r, k = r.strip(), k.strip()
             pl = len(commonprefix([r, k]))
@@ -69,16 +69,11 @@ def getLyrics(url):
             r, k = r.split(), k.split()
             if len(r) != len(k):
                 continue
-            rt, kt = [], []
             for rw, kw in zip(r, k):
                 if match(r"^[a-z\s]+$", rw) and match(r"^[가-힣\s]+$", kw):
-                    rt.append(rw)
-                    kt.append(kw)
-            r, k = " ".join(rt), " ".join(kt)
-            if r and k:
-                lyrics.append((r, k))
+                    words.add((rw, kw))
         print(f"{getElapsed()} - {url.split('/')[-2].replace('-', ' ')}", end="\r")
-        return lyrics
+        return words
     except Exception as e:
         print(f"{e.__class__.__name__} - {url}")
         return []
@@ -98,9 +93,9 @@ else:
 
 with ThreadPoolExecutor(max_workers=100) as executor:
     futures = [executor.submit(getLyrics, song) for song in songs]
-lyrics = {lyric for future in as_completed(futures) for lyric in future.result()}
+words = {word for future in as_completed(futures) for word in future.result()}
 
 with open("train.csv", "w", encoding="utf-8", newline="") as file:
-    writer(file).writerows(lyrics)
+    writer(file).writerows(words)
 
-print(f"\nscraped {len(lyrics)} pairs ({len(songs)} songs) in {getElapsed()}")
+print(f"\nscraped {len(words)} pairs ({len(songs)} songs) in {getElapsed()}")
