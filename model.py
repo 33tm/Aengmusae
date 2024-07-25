@@ -1,6 +1,10 @@
 from csv import reader
 from os.path import exists
+from datetime import timedelta
+from timeit import default_timer
 from torch import torch, nn, optim
+
+start = default_timer()
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -10,7 +14,7 @@ if not exists("out/data.csv"):
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
     data = [tuple(row) for row in reader(file)]
-    print(f"Loaded {len(data)} pairs")
+    print(f"Loaded {len(data)} pairs\n")
     romaja, korean = zip(*data)
 
 class Initialize:
@@ -78,3 +82,5 @@ for epoch in range(100):
     print(f'Epoch [{epoch + 1}/{100}], Loss: {(total_loss / len(romaja.tensors)):.4f}')
 
 torch.jit.script(model).save("out/model.pt")
+
+print(f"\nFinished in {str(timedelta(seconds=default_timer() - start)).split(".")[0]}")
