@@ -7,3 +7,4 @@ train.json
 test.json
 train.csv
 test.csv
+model.pt
