@@ -70,6 +70,10 @@ create_tensors(korean)
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.01)
 
+def getElapsed():
+    elapsed = timedelta(seconds=default_timer() - start)
+    return str(elapsed).split(".")[0]
+
 for epoch in range(100):
     total_loss = 0
     for r, k in zip(romaja.tensors, korean.tensors):
@@ -79,8 +83,8 @@ for epoch in range(100):
         total_loss += loss.item()
         loss.backward()
         optimizer.step()
-    print(f'Epoch [{epoch + 1}/{100}], Loss: {(total_loss / len(romaja.tensors)):.4f}')
+    print(f"[{getElapsed()}]Epoch [{epoch + 1}/{100}], Loss: {(total_loss / len(romaja.tensors)):.4f}")
 
 torch.jit.script(model).save("out/model.pt")
 
-print(f"\nFinished in {str(timedelta(seconds=default_timer() - start)).split(".")[0]}")
+print(f"\nFinished in {getElapsed()}")
