@@ -1,11 +1,2 @@
 .venv
-.idea
-.DS_Store
-node_modules
-temp
-train.json
-test.json
-train.csv
-test.csv
-model.pt
-*.ipynb
+out
