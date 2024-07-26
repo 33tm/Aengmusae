@@ -1,6 +1,6 @@
 from csv import reader
-from jamo import h2j, j2hcj
 from os.path import exists
+from jamo import h2j, j2hcj
 from datetime import timedelta
 from timeit import default_timer
 from torch import torch, nn, optim
@@ -19,14 +19,14 @@ def getElapsed():
     return str(elapsed).split(".")[0]
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
-    data = [tuple(row) for row in reader(file)][:10]
+    data = [tuple(row) for row in reader(file)][:100]
     print(f"Loaded {len(data)} pairs in {getElapsed()}\n")
     romaja, korean = zip(*data)
 
 class Initialize:
     def __init__(self, words):
         self.words = words
-        self.charset = sorted(list(set("".join(words))))
+        self.charset = [" "] + sorted(list(set("".join(words))))
         self.max = max([len(word) for word in words])
         self.tensors = []
 
@@ -50,7 +50,7 @@ class LSTM(nn.Module):
         super(LSTM, self).__init__()
         self.device = device
         self.dropout = nn.Dropout(0.3)
-        self.embedding = nn.Embedding(charset_max, 256)
+        self.embedding = nn.Embedding(charset_max, 256, padding_idx=0)
         self.lstm = nn.LSTM(256, 512, num_layers=3, batch_first=True, bidirectional=True, dropout=0.3)
         self.linear = nn.Linear(1024, charset_max)
     
@@ -60,8 +60,8 @@ class LSTM(nn.Module):
             torch.zeros(6, input.size(0), 512).to(self.device),
             torch.zeros(6, input.size(0), 512).to(self.device)
         )
-        output, hidden = self.lstm(embedded, hidden)
-        return self.linear(output), hidden
+        output, _ = self.lstm(embedded, hidden)
+        return self.linear(output)
     
 model = LSTM(device).to(device)
 
@@ -84,9 +84,7 @@ for epoch in range(50):
     for r, k in training:
         r, k = r.to(device), k.to(device)
         optimizer.zero_grad()
-        output, _ = model(r)
-        k = k.view(-1)
-        loss = criterion(output.view(-1, charset_max), k)
+        loss = criterion(model(r).view(-1, charset_max), k.view(-1))
         training_loss += loss.item()
         loss.backward()
         nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -99,9 +97,7 @@ for epoch in range(50):
     with torch.no_grad():
         for r, k in validation:
             r, k = r.to(device), k.to(device)
-            output, _ = model(r)
-            k = k.view(-1)
-            loss = criterion(output.view(-1, charset_max), k)
+            loss = criterion(model(r).view(-1, charset_max), k.view(-1))
             validation_loss += loss.item()
     
     avg_validation_loss = validation_loss / len(validation)
