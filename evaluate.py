@@ -7,7 +7,7 @@ model = torch.jit.load("out/model.pt")
 model.eval()
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
-    data = [tuple(row) for row in reader(file)][:100]
+    data = [tuple(row) for row in reader(file)][:1000]
     romaja, korean = zip(*data)
 
 class Initialize:

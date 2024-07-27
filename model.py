@@ -19,7 +19,7 @@ def getElapsed():
     return str(elapsed).split(".")[0]
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
-    data = [tuple(row) for row in reader(file)][:100]
+    data = [tuple(row) for row in reader(file)][:1000]
     print(f"Loaded {len(data)} pairs in {getElapsed()}\n")
     romaja, korean = zip(*data)
 
@@ -79,7 +79,7 @@ criterion = nn.CrossEntropyLoss(ignore_index=0)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, patience=5)
 
-for epoch in range(50):
+for epoch in range(100):
     model.train()
     training_loss = 0
     for r, k in training:
