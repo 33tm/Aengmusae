@@ -42,6 +42,7 @@ def create_tensors(input: Initialize):
         for i, char in enumerate(word):
             tensor[i] = input.charset.index(char)
         input.tensors.append(tensor)
+    input.tensors = torch.stack(input.tensors)
 
 create_tensors(romaja), create_tensors(korean)
 
@@ -53,7 +54,7 @@ class LSTM(nn.Module):
         self.embedding = nn.Embedding(charset_max, 256, padding_idx=0)
         self.lstm = nn.LSTM(256, 512, num_layers=3, batch_first=True, bidirectional=True, dropout=0.3)
         self.linear = nn.Linear(1024, charset_max)
-    
+
     def forward(self, input):
         embedded = self.dropout(self.embedding(input))
         hidden = (  
@@ -62,10 +63,10 @@ class LSTM(nn.Module):
         )
         output, _ = self.lstm(embedded, hidden)
         return self.linear(output)
-    
+
 model = LSTM(device).to(device)
 
-dataset = TensorDataset(torch.stack(romaja.tensors), torch.stack(korean.tensors))
+dataset = TensorDataset(romaja.tensors, korean.tensors)
 t, v = torch.utils.data.random_split(dataset, [
     int(len(dataset) * 0.8),
     len(dataset) - int(len(dataset) * 0.8)
@@ -73,7 +74,7 @@ t, v = torch.utils.data.random_split(dataset, [
 
 training = DataLoader(t, batch_size=128, shuffle=True)
 validation = DataLoader(v, batch_size=128, shuffle=False)
-    
+
 criterion = nn.CrossEntropyLoss(ignore_index=0)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, patience=5)
@@ -99,10 +100,10 @@ for epoch in range(50):
             r, k = r.to(device), k.to(device)
             loss = criterion(model(r).view(-1, charset_max), k.view(-1))
             validation_loss += loss.item()
-    
+
     avg_validation_loss = validation_loss / len(validation)
     scheduler.step(avg_validation_loss)
-    
+
     print(f"[{getElapsed()}] Epoch {epoch + 1:02} of 50, Training Loss: {avg_training_loss:.4f}, Validation Loss: {avg_validation_loss:.4f}")
 
 torch.jit.script(model).save("out/model.pt")
