@@ -19,7 +19,7 @@ def getElapsed():
     return str(elapsed).split(".")[0]
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
-    data = [tuple(row) for row in reader(file)][:1000]
+    data = [tuple(row) for row in reader(file)]
     print(f"Loaded {len(data)} pairs in {getElapsed()}\n")
     romaja, korean = zip(*data)
 
