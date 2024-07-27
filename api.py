@@ -1,12 +1,8 @@
+from flask import Flask, request, jsonify
 import torch
 from csv import reader
+from json import loads
 from jamo import h2j, j2hcj, j2h
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-model = torch.jit.load("out/model.pt")
-
-model.eval()
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
     data = [tuple(row) for row in reader(file)]
@@ -22,8 +18,16 @@ def decompose(word):
 
 romaja, korean = map(Initialize, [romaja, [decompose(word) for word in korean]])
 
-def evaluate(input):
-    output = []
+model = torch.jit.load("out/model.pt")
+model.eval()
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+app = Flask(__name__)
+
+@app.route("/", methods=["POST"])
+def evaluate():
+    input, output = request.json["query"], []
     for word in input.split():
         tensor = torch.tensor([romaja.charset.index(char) for char in word]).to(device)
         with torch.no_grad():
@@ -38,4 +42,5 @@ def evaluate(input):
         output.append(temp.replace(" ", ""))
     return " ".join(output)
 
-print(evaluate("annyeong"))
+if __name__ == "__main__":
+    app.run()
