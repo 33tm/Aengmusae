@@ -1,13 +1,15 @@
 import torch
 from csv import reader
-from jamo import h2j, j2hcj
+from jamo import h2j, j2hcj, j2h
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 model = torch.jit.load("out/model.pt")
+
 model.eval()
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
-    data = [tuple(row) for row in reader(file)][:1000]
+    data = [tuple(row) for row in reader(file)]
     romaja, korean = zip(*data)
 
 class Initialize:
@@ -20,11 +22,20 @@ def decompose(word):
 
 romaja, korean = map(Initialize, [romaja, [decompose(word) for word in korean]])
 
-tensor = torch.zeros(max(romaja.max, korean.max), dtype=torch.long).to(device)
-for i, char in enumerate("na"):
-    tensor[i] = romaja.charset.index(char)
+def evaluate(input):
+    output = []
+    for word in input.split():
+        tensor = torch.tensor([romaja.charset.index(char) for char in word]).to(device)
+        with torch.no_grad():
+            indexes = torch.argmax(model(tensor.unsqueeze(0)), dim=-1).squeeze(0).tolist()
+        jamos = [c for c in "".join([korean.charset[i] for i in indexes]).split(".") if c]
+        temp = ""
+        for jamo in jamos:
+            try:
+                temp += j2h(*jamo)
+            except:
+                temp += jamo
+        output.append(temp.replace(" ", ""))
+    return " ".join(output)
 
-with torch.no_grad():
-    output = model(tensor.unsqueeze(0))
-    indexes = torch.argmax(output, dim=-1).squeeze(0).tolist()
-    print("".join([korean.charset[i] for i in indexes]))
+print(evaluate("annyeong"))
