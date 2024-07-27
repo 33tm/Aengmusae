@@ -25,6 +25,6 @@ for i, char in enumerate("na"):
     tensor[i] = romaja.charset.index(char)
 
 with torch.no_grad():
-    indexes = torch.argmax(model(tensor.unsqueeze(0)), dim=-1).squeeze(0).tolist()
-    print([i for i in indexes])
+    output = model(tensor.unsqueeze(0))
+    indexes = torch.argmax(output, dim=-1).squeeze(0).tolist()
     print("".join([korean.charset[i] for i in indexes]))

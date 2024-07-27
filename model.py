@@ -79,7 +79,10 @@ criterion = nn.CrossEntropyLoss(ignore_index=0)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, patience=5)
 
-for epoch in range(100):
+if torch.cuda.is_available():
+    print(f"CUDA via {torch.cuda.get_device_name()}")
+
+for epoch in range(50):
     model.train()
     training_loss = 0
     for r, k in training:
