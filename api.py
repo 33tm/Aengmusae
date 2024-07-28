@@ -18,10 +18,10 @@ def decompose(word):
 
 romaja, korean = map(Initialize, [romaja, [decompose(word) for word in korean]])
 
-model = torch.jit.load("out/model.pt")
-model.eval()
-
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = torch.jit.load("out/model.pt", map_location=device)
+model.eval()
 
 app = Flask(__name__)
 
