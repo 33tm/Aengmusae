@@ -82,6 +82,9 @@ scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, "min", factor=0.1, p
 if torch.cuda.is_available():
     print(f"CUDA via {torch.cuda.get_device_name()}")
 
+epochs_without_improvement = 0
+best_validation_loss = float('inf')
+
 for epoch in range(24):
     model.train()
     training_loss = 0
@@ -107,8 +110,17 @@ for epoch in range(24):
     avg_validation_loss = validation_loss / len(validation)
     scheduler.step(avg_validation_loss)
 
-    print(f"[{getElapsed()}] Epoch {epoch + 1:02} of 24, Training Loss: {avg_training_loss:.4f}, Validation Loss: {avg_validation_loss:.4f}")
+    if avg_validation_loss < best_validation_loss:
+        best_validation_loss = avg_validation_loss
+        epochs_without_improvement = 0
+        torch.save(model.state_dict(), "out/model.pt")
+    else:
+        epochs_without_improvement += 1
 
-torch.save(model.state_dict(), "out/model.pt")
+    if epochs_without_improvement >= 5:
+        print(f"Early stop at epoch {epoch + 1:02}")
+        break
+
+    print(f"[{getElapsed()}] Epoch {epoch + 1:02}, Training Loss: {avg_training_loss:.4f}, Validation Loss: {avg_validation_loss:.4f}")
 
 print(f"\nFinished in {getElapsed()}")
