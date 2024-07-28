@@ -51,14 +51,14 @@ def evaluate():
         tensor = torch.tensor([romaja.charset.index(char) for char in word]).to(device)
         with torch.no_grad():
             indexes = torch.argmax(model(tensor.unsqueeze(0)), dim=-1).squeeze(0).tolist()
-        jamos = [c for c in "".join([korean.charset[i] for i in indexes]).split(".") if c]
+        jamos = [c for c in "".join([korean.charset[i] for i in indexes]).split(".")]
         temp = ""
         for jamo in jamos:
             try:
                 temp += j2h(*jamo)
             except:
                 temp += jamo
-        output.append(temp.replace(" ", ""))
+        output.append(temp)
     return " ".join(output)
 
 if __name__ == "__main__":
