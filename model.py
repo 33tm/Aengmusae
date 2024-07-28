@@ -109,6 +109,6 @@ for epoch in range(30):
 
     print(f"[{getElapsed()}] Epoch {epoch + 1:02} of 30, Training Loss: {avg_training_loss:.4f}, Validation Loss: {avg_validation_loss:.4f}")
 
-torch.jit.script(model).save("out/model.pt")
+torch.save(model.state_dict(), "out/model.pt")
 
 print(f"\nFinished in {getElapsed()}")
