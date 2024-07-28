@@ -1,4 +1,5 @@
 from csv import reader
+from waitress import serve
 from torch import torch, nn
 from jamo import h2j, j2hcj, j2h
 from flask import Flask, request
@@ -62,4 +63,4 @@ def evaluate():
     return " ".join(output)
 
 if __name__ == "__main__":
-    app.run()
+    serve(app, host="0.0.0.0", port=8080)
