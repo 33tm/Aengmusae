@@ -46,7 +46,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["POST"])
 def evaluate():
-    input, output = request.json["query"], []
+    input, output = request.json["query"].lower(), []
     for word in input.split():
         tensor = torch.tensor([romaja.charset.index(char) for char in word]).to(device)
         with torch.no_grad():
