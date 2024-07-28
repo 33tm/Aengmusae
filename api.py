@@ -1,9 +1,8 @@
-from flask import Flask, request
-
 import torch
 from csv import reader
 from json import loads
 from jamo import h2j, j2hcj, j2h
+from flask import Flask, request
 
 with open("out/data.csv", encoding="utf-8", newline="") as file:
     data = [tuple(row) for row in reader(file)]
