@@ -22,6 +22,7 @@ export const metadata: Metadata = {
         "convert romanized korean",
         "korean nlp",
         "korean ai",
+        "korean romanization",
         "romaja"
     ]
 }
