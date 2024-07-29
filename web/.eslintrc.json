@@ -1,0 +1,27 @@
+{
+    "extends": "next",
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "never"
+        ],
+        "comma-dangle": [
+            "error",
+            "never"
+        ],
+        "import/no-anonymous-default-export": "off",
+        "react/display-name": "off"
+    }
+}
