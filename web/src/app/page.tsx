@@ -8,7 +8,7 @@ export default () => {
         <>
             <div className="pl-4 pt-4">
                 <h1 className="text-3xl font-bold">Aengmusae (앵무새)</h1>
-                <p>Convert romanized Korean text into Korean using AI</p>
+                <p>Convert romanized Korean text into Korean Hangul using AI</p>
             </div>
             <Aengmusae />
             <Link href="https://tttm.us">
