@@ -9,6 +9,10 @@ export const Aengmusae = () => {
 
     const submit = (event: FormEvent) => {
         event.preventDefault()
+        if (!/^[a-z\s]*$/.test(input.toLowerCase())) {
+            setOutput("Invalid input!")
+            return
+        }
         fetch(process.env.NEXT_PUBLIC_API_URL!, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
