@@ -1,8 +1,10 @@
 from csv import reader
-from waitress import serve
 from torch import torch, nn
 from jamo import h2j, j2hcj, j2h
+
 from flask import Flask, request
+from flask_cors import CORS
+from waitress import serve
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -44,6 +46,7 @@ model.load_state_dict(torch.load("out/model.pt", map_location=device))
 model.eval()
 
 app = Flask(__name__)
+cors = CORS(app)
 
 @app.route("/", methods=["POST"])
 def evaluate():
