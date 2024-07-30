@@ -105,7 +105,7 @@ The training process creates a [`model.pt`](https://github.com/33tm/Aengmusae/re
 ### API
 Running the API requires the same dependenices as training the model.
 ```bash
-# Install dependencies (+ training dependencies)
+# Install dependencies (+training dependencies)
 pip3 install flask flask_cors waitress
 
 # Run the API
