@@ -68,6 +68,8 @@ You can download the model from [`model.pt`](https://github.com/33tm/Aengmusae/r
 
 Put the files in `/out`.
 
+Make sure to download both to run the API.
+
 ### Data Collection
 ```bash
 # Install dependencies
@@ -79,6 +81,8 @@ python3 data.py
 This creates a [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) file in `/out`. Takes quite a while to scrape, I recommend just downloading the premade dataset if you want to train the model.
 
 ### Training
+Training requires [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) to be in `/out`.
+
 Install torch [for your system](https://pytorch.org/get-started/locally/)
 ```bash
 # Run your specific torch installation command
@@ -105,7 +109,8 @@ The RTX 4090 definitely had the best value to rent, especially for a small proje
 The training process creates a [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) file in `/out`.
 
 ### API
-Running the API requires the same dependenices as training the model.
+Running the API requires the same dependenices as training the model. It requires both [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) and [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) to exist in `/out`.
+
 ```bash
 # Install dependencies (+training dependencies)
 pip3 install flask flask_cors waitress
