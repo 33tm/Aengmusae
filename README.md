@@ -68,7 +68,7 @@ You can download the model from [`model.pt`](https://github.com/33tm/Aengmusae/r
 
 Put the files in `/out`.
 
-### Data collection
+### Data Collection
 ```bash
 # Install dependencies
 pip3 install bs4 requests
