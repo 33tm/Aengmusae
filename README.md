@@ -62,9 +62,11 @@ I really think this model could be more useful if it was trained with context (o
 
 ## How to Run
 
-You can download the model from [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) and skip the data collection process.
+You can download the dataset from [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) and skip the data collection process.
 
 You can download the model from [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) and skip the training process.
+
+Put the files in `/out`.
 
 ### Data collection
 ```bash
