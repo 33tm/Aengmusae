@@ -24,9 +24,9 @@ In total, there were 465,247 romanized/korean word pairs to train on.
 
 ### Issues
 
-The model does not address the issue of different words having the same pronunciation. As mentioned above, the training data is split into individual words and the sentences (and the context of the word) are discarded. Since Korean is a language that depends on the context of a word to know its spelling, this seemingly minor drawback draws this model essentially useless in terms of getting meaning from a romanized word.
+The model does not address the issue of different words having the same pronunciation. As mentioned above, the training data is split into individual words and the sentences (and the context of the word) are discarded. Since Korean is a language that depends on the context of a word to know its spelling, this seemingly minor issue makes this model essentially useless in terms of reliably getting the correct Korean word from a romanized input.
 
-Although the dataset had varied romanization techniques, it was still incredibly biased towards the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean), the official standard.
+Although the dataset had varied romanization standards incorporated, it was still incredibly biased towards the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean), the official standard, and often returned incorrect Korean for words that were not formatted in that standard.
 
 I also noticed how the model failed to predict the last syllable of a word correctly unless you repeated the last word multiple times.
 ```
