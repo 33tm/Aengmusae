@@ -6,7 +6,7 @@ import { FaGithub, FaInstagram, FaXTwitter } from "react-icons/fa6"
 export default () => {
     return (
         <>
-            <div className="absolute flex justify-between w-[calc(100vw-4rem)] md:w-auto top-12 left-12 md:top-auto md:bottom-12">
+            <div className="absolute flex justify-between z-10 w-[calc(100vw-4rem)] md:w-auto top-12 left-12 md:top-auto md:bottom-12">
                 <Link href="https://tttm.us">
                     <Logo className="h-12 md:h-24 fill-accent" />
                 </Link>

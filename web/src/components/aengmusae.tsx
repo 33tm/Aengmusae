@@ -17,10 +17,9 @@ export const Aengmusae = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: input || "annyeong" })
-        }).then(async res => {
-            if (!res.ok) setError(true)
-            else setOutput(await res.text())
-        }).catch(() => setError(true))
+        })
+            .then(async res => setOutput(await res.text()))
+            .catch(() => setError(true))
     }
 
     return (
