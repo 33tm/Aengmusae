@@ -33,7 +33,7 @@ export const Aengmusae = () => {
                     <form onSubmit={submit} className="flex flex-col md:flex-row m-auto">
                         <input
                             type="text"
-                            className="bg-background p-2 border-2 border-accent rounded-t-lg md:rounded-none md:rounded-l-lg focus:outline-none"
+                            className="bg-background p-2 border-2 border-accent text-center md:text-left rounded-t-lg md:rounded-none md:rounded-l-lg focus:outline-none"
                             placeholder="annyeong"
                             onChange={({ target }) => setInput(target.value)}
                         />
