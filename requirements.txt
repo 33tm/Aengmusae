@@ -1,0 +1,12 @@
+# data.py
+bs4
+requests
+
+# model.py
+torch
+jamo
+
+# api.py (requires model.py dependencies as well)
+flask
+flask_cors
+waitress
