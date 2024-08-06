@@ -1,18 +1,28 @@
 "use client"
 
 import { FormEvent, useState } from "react"
+import { CgSpinner } from "react-icons/cg"
 
 export const Aengmusae = () => {
+    const [cache, setCache] = useState("")
     const [input, setInput] = useState("")
     const [output, setOutput] = useState("")
     const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const submit = (event: FormEvent) => {
         event.preventDefault()
+
+        if (input === cache) return
+        else setCache(input)
+
         if (!/^[a-z\s]*$/.test(input.toLowerCase())) {
             setOutput("Invalid input!")
             return
         }
+
+        setLoading(true)
+
         fetch(process.env.NEXT_PUBLIC_API_URL!, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -20,6 +30,8 @@ export const Aengmusae = () => {
         })
             .then(async res => setOutput(await res.text()))
             .catch(() => setError(true))
+
+        setLoading(false)
     }
 
     return (
@@ -39,13 +51,18 @@ export const Aengmusae = () => {
                         />
                         <button
                             type="submit"
-                            className="bg-accent p-2 md:pr-3 border-2 border-accent rounded-b-lg md:rounded-none md:rounded-r-lg text-background"
+                            className={`bg-accent p-2 md:pr-3 border-2 border-accent rounded-b-lg md:rounded-none md:rounded-r-lg text-background ${loading && "opacity-80 cursor-not-allowed"}`}
+                            disabled={loading}
                         >
                             Submit
                         </button>
                     </form>
                     <p className="absolute w-[calc(100vw-4rem)] mt-28 text-4xl text-center font-semibold">
-                        {output}
+                        {loading ? (
+                            <CgSpinner className="animate-spin m-auto" />
+                        ) : (
+                            <>{output}</>
+                        )}
                     </p>
                 </>
             )}
