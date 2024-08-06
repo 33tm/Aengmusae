@@ -4,7 +4,6 @@ import { FormEvent, useState } from "react"
 import { CgSpinner } from "react-icons/cg"
 
 export const Aengmusae = () => {
-    const [cache, setCache] = useState("")
     const [input, setInput] = useState("")
     const [output, setOutput] = useState("")
     const [error, setError] = useState(false)
@@ -12,9 +11,6 @@ export const Aengmusae = () => {
 
     const submit = (event: FormEvent) => {
         event.preventDefault()
-
-        if (input === cache) return
-        else setCache(input)
 
         if (!/^[a-z\s]*$/.test(input.toLowerCase())) {
             setOutput("Invalid input!")
@@ -42,16 +38,17 @@ export const Aengmusae = () => {
                 </p>
             ) : (
                 <>
-                    <form onSubmit={submit} className="flex flex-col md:flex-row m-auto">
+                    <form onSubmit={submit} className={`flex flex-col md:flex-row m-auto ${loading && "opacity-80 cursor-not-allowed"}`}>
                         <input
                             type="text"
                             className="bg-background p-2 border-2 border-accent text-center md:text-left rounded-t-lg md:rounded-none md:rounded-l-lg focus:outline-none"
                             placeholder="annyeong"
                             onChange={({ target }) => setInput(target.value)}
+                            disabled={loading}
                         />
                         <button
                             type="submit"
-                            className={`bg-accent p-2 md:pr-3 border-2 border-accent rounded-b-lg md:rounded-none md:rounded-r-lg text-background ${loading && "opacity-80 cursor-not-allowed"}`}
+                            className="bg-accent p-2 md:pr-3 border-2 border-accent rounded-b-lg md:rounded-none md:rounded-r-lg text-background"
                             disabled={loading}
                         >
                             Submit
