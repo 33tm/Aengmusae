@@ -26,8 +26,7 @@ export const Aengmusae = () => {
         })
             .then(async res => setOutput(await res.text()))
             .catch(() => setError(true))
-
-        setLoading(false)
+            .then(() => setLoading(false))
     }
 
     return (
