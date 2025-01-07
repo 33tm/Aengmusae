@@ -1,34 +1,35 @@
-# Aengmusae (앵무새)
+# Parrot
 
-A demo is available at [aengmusae.tttm.us](https://aengmusae.tttm.us).
+A demo is available at [tttm.us/parrot](https://tttm.us/parrot).
 
 Instructions for how to train/run the model are at the bottom.
 
 ## Reversing Korean romanization with AI
 
-Romanizing Korean has always been inconsistent because of the lack of consensus between the [many different Korean romanization systems](https://en.wikipedia.org/wiki/Romanization_of_Korean#Systems). In addition, the language is difficult to romanize due to how many words have the same pronunciation, yet have spelling differences that are difficult to express with the english alphabet. This prevents something like [Chinese Pinyin](https://en.wikipedia.org/wiki/Pinyin) from existing.
+Romanizing Korean has always been inconsistent because of the lack of consensus between the [many different Korean romanization systems](https://en.wikipedia.org/wiki/Romanization_of_Korean#Systems). In addition, the language is difficult to romanize due to how many words have the same pronunciation, yet have spelling differences that are difficult to express with the english alphabet. This prevents something like [Pinyin](https://en.wikipedia.org/wiki/Pinyin) from existing.
 
-Since 2000, the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean) has been the official romanization system of South Korea. Even with an official standard, non-standardized romanization is common due to the lack of enforcement/care outside of government related material.
+Since 2000, the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean) has been the official romanization system of South Korea. Even with an official standard, non-standardized romanization is common due to the lack of enforcement/care outside of government related material. Specifically, I noticed how local businesses such as restaurants and small stores each had their own quirks in terms of romanizing their names. 
 
-Interested in seeing how a neural network would interpret the different romanization methods and create predictions, I created an LSTM RNN model trained on romanized/korean word pairs. I didn't have high hopes for this model at all due to how the model completely ignores the issue of words with the same pronunciation having different spellings in the way it throws out all the context in the sentence and trains on the words individually.
+Interested in seeing how a neural network would interpret the different romanization methods and create predictions, I created an LSTM RNN model trained on romanized/korean word pairs. I didn't have high hopes for this model at all--mostly due to my inexperience in this whole field--but also due to how the model completely ignores the issue of words with the same pronunciation having different spellings. It discards any context provided from the original sentence. Even if the dataset is created from full sentences, I made the decision to split the sentence into individual English-Korean word pairs in hope to make the learning process for me easier.
 
 ### Dataset
 
 I scraped romanized/korean lyrics from [Color Coded Lyrics](https://colorcodedlyrics.com) in hope that community romanization would have more variability in its romanization and possibly have unstandardized patterns the model could learn off of.
 
-Additionally, I got more romanized/korean pairs from the Korean dictionary from [Kaikki](https://kaikki.org/dictionary/Korean/), which was created using [Wiktextract: Wiktionary as Machine-Readable Structured Data](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.140.pdf). Using this dictionary in this case could have been a mistake since presumably, something like this would have used a single romanization system, reducing the model's overall ability to generalize romanization patterns.
+Additionally, I got more romanized/korean pairs from the Korean dictionary from [Kaikki](https://kaikki.org/dictionary/Korean/), which was created using [Wiktextract: Wiktionary as Machine-Readable Structured Data](http://www.lrec-conf.org/proceedings/lrec2022/pdf/2022.lrec-1.140.pdf). Using this dictionary in this case could have been a mistake since presumably something like this would have used a single romanization system, reducing the model's overall ability to generalize romanization patterns.
 
-In total, there were 465,247 romanized/korean word pairs to train on. 
+In total, I got 465,247 Korean-English word pairs to train on.
 
-[`train.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv)
+[`train.csv`](https://github.com/33tm/Parrot/releases/download/model/data.csv)
 
 ### Issues
 
-The model does not address the issue of different words having the same pronunciation. As mentioned above, the training data is split into individual words and the sentences (and the context of the word) are discarded. Since Korean is a language that depends on the context of a word to know its spelling, this seemingly minor issue makes this model essentially useless in terms of reliably getting the correct Korean word from a romanized input.
+The model does not address the issue of different words having the same pronunciation. As mentioned above, the training data is split into individual words and the sentences (and the context of the word) are discarded. Since Korean is a language that depends on the context of a word to know its spelling just from hearing it, this seemingly minor issue makes this model essentially useless in terms of reliably getting the correct Korean word from a romanized input.
 
-Although the dataset had varied romanization standards incorporated, it was still incredibly biased towards the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean), the official standard, and often returned incorrect Korean for words that were not formatted in that standard.
+Although the dataset had varied romanization standards incorporated, it was still incredibly biased towards the [Revised Romanization of Korean](https://en.wikipedia.org/wiki/Revised_Romanization_of_Korean), the official standard, and often returned incorrect Korean for words that were not formatted in said standard.
 
 I also noticed how the model failed to predict the last syllable of a word correctly unless you repeated the last word multiple times.
+
 ```
 Expected: nan mwonga dalla dalla => 난 뭔가 달라 달라
 
@@ -51,9 +52,11 @@ Input: jagiyaaa
 Output: 자기야
 ```
 
+I'm sure this is an incredibly trivial issue related to the input tensors, I'll make sure to come back and take another look at it once I get more experience working with this ecosystem :D
+
 ### Possible Improvement
 
-I really think this model could be more useful if it was trained with context (on sentences instead of words) so that this model could actually be useful when turning large amounts of unstandardized romanized Korean text to Korean.
+I really think this model could be more useful if it was trained with context (on the original sentences instead of words) so that this model could actually be useful when turning large amounts of unstandardized romanized Korean text to Korean.
 
 ### What I learned
 
@@ -62,9 +65,9 @@ I really think this model could be more useful if it was trained with context (o
 
 ## How to Run
 
-You can download the dataset from [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) and skip the data collection process.
+You can download the dataset from [`data.csv`](https://github.com/33tm/Parrot/releases/download/model/data.csv) and skip the data collection process.
 
-You can download the model from [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) and skip the training process.
+You can download the model from [`model.pt`](https://github.com/33tm/Parrot/releases/download/model/model.pt) and skip the training process.
 
 Put the files in `/out`.
 
@@ -78,10 +81,10 @@ pip3 install bs4 requests
 # Run data collection
 python3 data.py
 ```
-This creates a [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) file in `/out`. Takes quite a while to scrape, I recommend just downloading the premade dataset if you want to train the model.
+This creates a [`data.csv`](https://github.com/33tm/Parrot/releases/download/model/data.csv) file in `/out`. Takes quite a while to scrape, I recommend just downloading the premade dataset if you want to train the model.
 
 ### Training
-Training requires [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) to be in `/out`.
+Training requires [`data.csv`](https://github.com/33tm/Parrot/releases/download/model/data.csv) to be in `/out`.
 
 Install torch [for your system](https://pytorch.org/get-started/locally/)
 ```bash
@@ -106,10 +109,10 @@ Make sure to use any acceleration you have, this takes quite a bit of time.
 
 The RTX 4090 definitely had the best value to rent, especially for a small project like this. Poor GTX 980 probably cost more in electricity lol :sob:
 
-The training process creates a [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) file in `/out`.
+The training process creates a [`model.pt`](https://github.com/33tm/Parrot/releases/download/model/model.pt) file in `/out`.
 
 ### API
-Running the API requires the same dependenices as training the model. It requires both [`data.csv`](https://github.com/33tm/Aengmusae/releases/download/model/data.csv) and [`model.pt`](https://github.com/33tm/Aengmusae/releases/download/model/model.pt) to exist in `/out`.
+Running the API requires the same dependenices as training the model. It requires both [`data.csv`](https://github.com/33tm/Parrot/releases/download/model/data.csv) and [`model.pt`](https://github.com/33tm/Parrot/releases/download/model/model.pt) to exist in `/out`.
 
 ```bash
 # Install dependencies (+training dependencies)

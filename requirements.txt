@@ -4,6 +4,7 @@ requests
 
 # model.py
 torch
+numpy
 jamo
 
 # api.py (requires model.py dependencies as well)

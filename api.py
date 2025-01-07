@@ -42,7 +42,7 @@ class LSTM(nn.Module):
         return self.linear(output)
 
 model = LSTM(device).to(device)
-model.load_state_dict(torch.load("out/model.pt", map_location=device))
+model.load_state_dict(torch.load("out/model.pt", map_location=device, weights_only=True))
 model.eval()
 
 app = Flask(__name__)
@@ -66,4 +66,5 @@ def evaluate():
     return " ".join(output)
 
 if __name__ == "__main__":
+    print("Listening on 8080")
     serve(app, host="0.0.0.0", port=8080)
